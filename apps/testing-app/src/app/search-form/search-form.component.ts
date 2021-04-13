@@ -1,9 +1,4 @@
-import { Component } from '@angular/core';
-import { select, Store } from '@ngrx/store';
-import { selectActiveIdAndForm } from '../+state/forms.selectors';
-import { AppState } from '../app.module';
-import { formsValueUpdated } from '../+state/forms.actions';
-import { FormState } from '../+state/forms.reducer';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'ng-multiple-components-state-search-form',
@@ -11,23 +6,6 @@ import { FormState } from '../+state/forms.reducer';
   styleUrls: ['./search-form.component.css']
 })
 export class SearchFormComponent {
-
-  searchForm$ = this.store.pipe(select(selectActiveIdAndForm));
-  searchForm: FormState = null;
-  searchFormId: string;
-
-  inputModel = '';
-
-  constructor(private store: Store<AppState>) {
-    this.searchForm$.subscribe((activeForm) => {
-      this.searchForm = activeForm.form;
-      this.searchFormId = activeForm.formId;
-      this.inputModel = activeForm.form?.formValue ?? ''
-    });
-  }
-
-  updateState() {
-    this.store.dispatch(formsValueUpdated({ formsId: this.searchFormId, formValue: this.inputModel }));
-  }
-
+  @Input() textValue = '';
+  @Output() textValueChanged = new EventEmitter<Event>();
 }

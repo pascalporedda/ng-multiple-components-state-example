@@ -15,6 +15,7 @@ import { ROUTER_FEATURE_KEY } from './+state/router.selectors';
 import { FormsEffects } from './+state/forms.effects';
 import { FormsState } from './+state/forms.reducer';
 import { FormsModule } from '@angular/forms';
+import { SearchFormContainerComponent } from './views/search-form-container/search-form-container.component';
 
 export interface ParamsRouterState {
   url: string
@@ -43,7 +44,7 @@ export interface AppState {
 }
 
 @NgModule({
-  declarations: [AppComponent, IndexComponent, SearchFormComponent],
+  declarations: [AppComponent, IndexComponent, SearchFormComponent, SearchFormContainerComponent],
   imports: [
     BrowserModule,
     RouterModule.forRoot([{
@@ -51,7 +52,7 @@ export interface AppState {
       component: IndexComponent
     }, {
       path: 'search-form/:id',
-      component: SearchFormComponent
+      component: SearchFormContainerComponent
     }, {
       path: '*',
       redirectTo: ''
