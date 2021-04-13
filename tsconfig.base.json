@@ -15,7 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@ng-multiple-components-state/forms": ["libs/forms/src/index.ts"]
+      "@ng-multiple-components-state/forms": ["libs/forms/src/index.ts"],
+      "@ng-multiple-components-state/component-state": [
+        "libs/component-state/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -4,6 +4,7 @@ import { filter, map } from 'rxjs/operators';
 import { selectActiveIdAndForm } from './forms.selectors';
 import { Injectable } from '@angular/core';
 import { formInit } from './forms.actions';
+import { AppState } from '../app.module';
 
 @Injectable()
 export class FormsEffects {
@@ -18,6 +19,6 @@ export class FormsEffects {
     );
   });
 
-  constructor(private store: Store<unknown>) {
+  constructor(private store: Store<AppState>) {
   }
 }

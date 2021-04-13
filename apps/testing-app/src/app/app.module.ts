@@ -9,13 +9,14 @@ import { environment } from '../environments/environment';
 import { RouterModule, RouterStateSnapshot } from '@angular/router';
 import { IndexComponent } from './views/index/index.component';
 import { SearchFormComponent } from './search-form/search-form.component';
-import { routerReducer, RouterState, RouterStateSerializer, StoreRouterConnectingModule } from '@ngrx/router-store';
+import { routerReducer, RouterStateSerializer, StoreRouterConnectingModule } from '@ngrx/router-store';
 import * as fromForms from './+state/forms.reducer';
+import { FormsState } from './+state/forms.reducer';
 import { ROUTER_FEATURE_KEY } from './+state/router.selectors';
 import { FormsEffects } from './+state/forms.effects';
-import { FormsState } from './+state/forms.reducer';
 import { FormsModule } from '@angular/forms';
 import { SearchFormContainerComponent } from './views/search-form-container/search-form-container.component';
+import { ComponentStateModule } from '@ng-multiple-components-state/component-state';
 
 export interface ParamsRouterState {
   url: string
@@ -75,7 +76,10 @@ export interface AppState {
     StoreRouterConnectingModule.forRoot({
       serializer: ParamsSerializer
     }),
-    FormsModule
+    FormsModule,
+    ComponentStateModule.forRoot({
+      moduleName: 'search'
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
