@@ -14,6 +14,7 @@
   "projects": {
     "testing-app": { "tags": [] },
     "testing-app-e2e": { "tags": [], "implicitDependencies": ["testing-app"] },
-    "component-state": { "tags": [] }
+    "component-state": { "tags": [] },
+    "module-state": { "tags": [] }
   }
 }

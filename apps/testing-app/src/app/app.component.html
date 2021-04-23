@@ -1,9 +1,11 @@
-<div *ngFor='let form of forms$ | async'>
-  <a [routerLink]="['search-form', form]">{{ form }}</a>
-</div>
-<div>
-  <a [routerLink]="['search-form', nextFormId$ | async]" (click)='newClicked.next()'>
-    New form
+<nav mat-tab-nav-bar *ngIf='nextModuleId$ | async as nextNumber'>
+  <a mat-tab-link *ngFor='let link of currentInstances | async'
+     (click)='activeInstance = link'
+     [routerLink]='[link]'
+     [active]='activeInstance == link'> {{link}} </a>
+  <a mat-tab-link (click)='addNewModule(nextNumber)'>
+    <mat-icon>add_circle</mat-icon>
   </a>
-</div>
+</nav>
+{{ currentInstance$ | async | json }}
 <router-outlet></router-outlet>
