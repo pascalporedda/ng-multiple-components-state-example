@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, of } from 'rxjs';
-import { map, repeatWhen, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { map, withLatestFrom } from 'rxjs/operators';
 import { ModuleStateInstanceService } from './module-state-instance.service';
 import {
   ModuleStateRecord,
   ModuleStateServiceInterface,
 } from './module-state-collector.service';
+
+export interface ModuleInstance<T> {
+  name: string;
+  id: string;
+  state: T;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -19,43 +25,73 @@ export abstract class AbstractModuleStateService<T>
   moduleName: string;
   routeIdentifier: string | number = 'instanceId';
   currentInstanceIds$ = this.states$$.pipe(
-    map((stateId) => Object.keys(stateId))
+    map((stateId) => {
+      return Object.keys(stateId);
+    })
   );
 
-  nextModuleId$ = of('').pipe(
-    withLatestFrom(this.currentInstanceIds$),
-    map(([_, ids]) => {
-      return (
-        this.moduleName +
-        ' ' +
-        String(Object.keys(ids).length + 1).padStart(2, '0')
-      );
-    }),
-    repeatWhen(() => this.currentInstanceIds$)
+  instances$ = this.states$$.pipe(
+    map((states) => {
+      const stateIds = Object.keys(states);
+      const instances: ModuleInstance<T>[] = [];
+
+      for (let i = 0; i < stateIds.length; i++) {
+        instances.push({
+          name: this.moduleName + ' ' + String(i + 1).padStart(2, '0'),
+          id: stateIds[i],
+          state: states[stateIds[i]],
+        });
+      }
+
+      return instances;
+    })
   );
 
-  currentInstance$ = combineLatest(
+  nextModuleName$ = this.currentInstanceIds$.pipe(
+    map((ids) => {
+      return this.moduleName + ' ' + String(ids.length + 1).padStart(2, '0');
+    })
+  );
+
+  updateCurrentInstance$$ = new Subject<T>();
+
+  updateCurrentInstance$ = this.updateCurrentInstance$$.pipe(
+    withLatestFrom(this.moduleStateInstanceService.currentInstanceId$),
+    map(([newState, stateId]) => {
+      this.updateState(stateId.toString(), newState);
+    })
+  );
+
+  currentInstance$: Observable<ModuleInstance<T>> = combineLatest(
     this.states$$,
     this.moduleStateInstanceService.currentInstanceId$
   ).pipe(
     map(([states, latestId]) => {
       const id = latestId;
-      console.log('called with id', id);
       if (!id) return null;
+      const stateIds = Object.keys(states);
 
       if (!states[id]) {
         const blankState = this.getBlankModuleState();
         this.addState(id.toString(), blankState);
-        return blankState;
+        return { state: blankState, name: '', id: id } as ModuleInstance<T>;
       }
 
-      return states[id];
+      const position = stateIds.findIndex((_) => _ === id);
+
+      return {
+        name: this.moduleName + ' ' + String(position + 1).padStart(2, '0'),
+        id: id,
+        state: states[id],
+      } as ModuleInstance<T>;
     })
   );
 
   constructor(
     protected moduleStateInstanceService: ModuleStateInstanceService
-  ) {}
+  ) {
+    this.updateCurrentInstance$.subscribe();
+  }
 
   static generateInstanceId(): string {
     const stringArr = [];
@@ -84,7 +120,6 @@ export abstract class AbstractModuleStateService<T>
     const currentStates = this.statesSnapshot();
     if (currentStates[stateId]) {
       delete currentStates[stateId];
-
       this.states$$.next(currentStates);
     }
   }
@@ -98,9 +133,22 @@ export abstract class AbstractModuleStateService<T>
     }
   }
 
+  updateCurrentInstance(state: T): void {
+    this.updateCurrentInstance$$.next(state);
+  }
+
   statesSnapshot(): ModuleStateRecord<T> {
     return {
       ...this.states$$.getValue(),
     };
+  }
+
+  generateModuleInstance(): string {
+    const newId = AbstractModuleStateService.generateInstanceId();
+    const blankState = this.getBlankModuleState();
+
+    this.addState(newId, blankState);
+
+    return newId;
   }
 }

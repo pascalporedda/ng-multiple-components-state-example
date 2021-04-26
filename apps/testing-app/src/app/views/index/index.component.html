@@ -1,0 +1,12 @@
+<form>
+  <div *ngFor='let field of state.formFields'>
+    <mat-form-field appearance='fill'>
+      <mat-label>Fill form field</mat-label>
+      <input matInput placeholder='Placeholder' [value]='state.formValues[field] || ""' (change)='updateInput($event)'>
+      <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+      <mat-hint>Hint</mat-hint>
+    </mat-form-field>
+  </div>
+  <br>
+  <button type='button' (click)='addFormField()' mat-flat-button color='primary'>add field</button>
+</form>

@@ -7,11 +7,12 @@ import {
   map,
   withLatestFrom,
 } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ModuleStateInstanceService } from './module-state-instance.service';
 
 export interface ModuleStateServiceInterface<T> {
   states$$: BehaviorSubject<ModuleStateRecord<T>>;
+  nextModuleName$: Observable<string>;
   moduleName: string;
   routeIdentifier: string | number;
 
