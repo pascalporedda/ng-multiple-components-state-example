@@ -1,17 +1,16 @@
-<nav mat-tab-nav-bar *ngIf='currentInstance'>
-  <div *ngFor='let instance of currentInstances'>
-    <a mat-tab-link
-       [routerLink]='[instance.id]'
-       [active]='currentInstance.id == instance.id'>
-      {{instance.name}}
-    </a>
-    <button mat-icon-button (click)='closeTab(instance.id)' *ngIf='currentInstances.length > 1'>
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
-  <a mat-tab-link (click)='addNewModule()' data-test-id='add-button'>
-    <mat-icon>add_circle</mat-icon>
+<nav mat-tab-nav-bar>
+  <a mat-tab-link
+     [routerLink]="['/graph']"
+     [active]='activeLink == "graph"'
+     (click)='activeLink = "graph"'
+  >
+    Graph
+  </a>
+  <a mat-tab-link
+     [routerLink]="['/search']"
+     (click)='activeLink = "search"'
+     [active]='activeLink == "search"'>
+    Search
   </a>
 </nav>
-{{ currentInstance | json }}
 <router-outlet></router-outlet>

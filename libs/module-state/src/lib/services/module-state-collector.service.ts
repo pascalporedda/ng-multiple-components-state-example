@@ -1,20 +1,11 @@
 import { Inject, Injectable, InjectionToken } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import {
-  delay,
-  distinctUntilChanged,
-  filter,
-  map,
-  withLatestFrom,
-} from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ModuleStateInstanceService } from './module-state-instance.service';
 
 export interface ModuleStateServiceInterface<T> {
   states$$: BehaviorSubject<ModuleStateRecord<T>>;
   nextModuleName$: Observable<string>;
   moduleName: string;
-  routeIdentifier: string | number;
+  routeIdentifier: string;
 
   addState: (stateId: string, state: T) => void;
   updateState: (stateId: string, state: T) => void;
@@ -36,35 +27,16 @@ export type ModuleStatesRecord<T> = Record<
   providedIn: 'root',
 })
 export class ModuleStateCollectorService {
-  states: ModuleStatesRecord<unknown> = {};
-
   constructor(
     @Inject(ModuleStateInterfaceToken)
-    private stateServices: ModuleStateServiceInterface<unknown>[]
-  ) {
-    this.registerStates();
-  }
+    public stateServices: ModuleStateServiceInterface<unknown>[]
+  ) {}
 
-  registerStates() {
-    this.stateServices.forEach((stateService) => {
-      this.states[stateService.moduleName] = stateService.states$$;
-    });
-  }
-
-  /**
-   * This contains the tabs of a module that have a unique id and their
-   * corresponding state.
-   * @param moduleName
-   */
-  // getModuleState<T>(moduleName: string): ModuleStateRecord<T> {
-  //   return this.states[moduleName] as ModuleStateRecord<T>;
-  // }
-  //
-  // setModuleState(moduleName: string, state: ModuleStateRecord<unknown>): void {
-  //   this.states[moduleName] = state;
+  // getServiceByInstance(
+  //   serviceInstance: ModuleStateServiceInterface<unknown>
+  // ): ModuleStateServiceInterface<unknown> | undefined {
+  //   return this.stateServices.find(
+  //     (stateService) => stateService instanceof serviceInstance
+  //   );
   // }
 }
-
-// Wie koennten wir vorgehen? Wir brauchen einen globalen Service der fuer unseren State verantwortlich ist,
-// dem es letztlich egal ist wo er seinen State herbekommt. Ob das in nem Observable oder sonst wo liegt
-// ist also egal. Wir brauchen also etwas was alles

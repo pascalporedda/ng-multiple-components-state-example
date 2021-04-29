@@ -1,0 +1,21 @@
+<nav mat-tab-nav-bar *ngIf="currentInstance">
+  <div *ngFor="let instance of currentInstances">
+    <a mat-tab-link
+       [routerLink]='["/graph", instance.id]'
+       [active]="currentInstance.id == instance.id">
+      {{instance.name}}
+    </a>
+    <button mat-icon-button (click)="closeTab(instance.id)" *ngIf="currentInstances.length > 1">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <a mat-tab-link (click)="addNewModule()" data-test-id="add-button">
+    <mat-icon>add_circle</mat-icon>
+  </a>
+</nav>
+<p>{{ currentInstance | json }}</p>
+
+<ng-multiple-components-state-graph
+  *ngIf="currentInstance"
+  (saved)="save($event)"
+  [nodes]="currentInstance.state.nodes"></ng-multiple-components-state-graph>

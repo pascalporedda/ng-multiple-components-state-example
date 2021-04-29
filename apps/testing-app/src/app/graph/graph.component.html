@@ -1,0 +1,10 @@
+<div class="node" *ngFor="let node of graphNodes">
+  {{ node }}
+</div>
+
+<div>
+  <button (click)="addNode()" mat-flat-button color="primary">Add node</button>
+</div>
+<div>
+  <button (click)="save()" mat-flat-button color="accent">Save nodes</button>
+</div>

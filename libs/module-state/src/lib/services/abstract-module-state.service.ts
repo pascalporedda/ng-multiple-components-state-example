@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ModuleStateInstanceService } from './module-state-instance.service';
 import {
   ModuleStateRecord,
   ModuleStateServiceInterface,
 } from './module-state-collector.service';
+import { Injectable } from '@angular/core';
 
 export interface ModuleInstance<T> {
   name: string;
@@ -14,7 +14,7 @@ export interface ModuleInstance<T> {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'platform',
 })
 export abstract class AbstractModuleStateService<T>
   implements ModuleStateServiceInterface<T> {
@@ -23,7 +23,7 @@ export abstract class AbstractModuleStateService<T>
   >({});
 
   moduleName: string;
-  routeIdentifier: string | number = 'instanceId';
+  abstract routeIdentifier: string;
   currentInstanceIds$ = this.states$$.pipe(
     map((stateId) => {
       return Object.keys(stateId);
@@ -52,16 +52,7 @@ export abstract class AbstractModuleStateService<T>
       return this.moduleName + ' ' + String(ids.length + 1).padStart(2, '0');
     })
   );
-
-  updateCurrentInstance$$ = new Subject<T>();
-
-  updateCurrentInstance$ = this.updateCurrentInstance$$.pipe(
-    withLatestFrom(this.moduleStateInstanceService.currentInstanceId$),
-    map(([newState, stateId]) => {
-      this.updateState(stateId.toString(), newState);
-    })
-  );
-
+  /// https://ncjamieson.com/avoiding-takeuntil-leaks/
   currentInstance$: Observable<ModuleInstance<T>> = combineLatest(
     this.states$$,
     this.moduleStateInstanceService.currentInstanceId$
@@ -70,10 +61,11 @@ export abstract class AbstractModuleStateService<T>
       const id = latestId;
       if (!id) return null;
       const stateIds = Object.keys(states);
-
+      this.currentInstanceId = id;
       if (!states[id]) {
         const blankState = this.getBlankModuleState();
-        this.addState(id.toString(), blankState);
+        this.addState(id, blankState);
+
         return { state: blankState, name: '', id: id } as ModuleInstance<T>;
       }
 
@@ -87,11 +79,11 @@ export abstract class AbstractModuleStateService<T>
     })
   );
 
+  private currentInstanceId: string = null;
+
   constructor(
     protected moduleStateInstanceService: ModuleStateInstanceService
-  ) {
-    this.updateCurrentInstance$.subscribe();
-  }
+  ) {}
 
   static generateInstanceId(): string {
     const stringArr = [];
@@ -134,7 +126,7 @@ export abstract class AbstractModuleStateService<T>
   }
 
   updateCurrentInstance(state: T): void {
-    this.updateCurrentInstance$$.next(state);
+    this.updateState(this.currentInstanceId, state);
   }
 
   statesSnapshot(): ModuleStateRecord<T> {

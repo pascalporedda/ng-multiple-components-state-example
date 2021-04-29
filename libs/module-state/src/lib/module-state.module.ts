@@ -1,12 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModuleStateCollectorService } from './services/module-state-collector.service';
-import { RouterModule } from '@angular/router';
 
 @NgModule({
-  imports: [CommonModule]
+  imports: [CommonModule],
+  declarations: [],
 })
-export class ModuleStateModule {
-  constructor(private collectorService: ModuleStateCollectorService) {
-  }
-}
+export class ModuleStateModule {}

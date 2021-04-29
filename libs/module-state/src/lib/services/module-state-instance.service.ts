@@ -10,7 +10,7 @@ export class ModuleStateInstanceService {
   routeIdentifier: string | number = 'instanceId';
   protected activatedRoute: ActivatedRoute = null;
 
-  protected currentInstanceId$$ = new BehaviorSubject<string | number>(null);
+  protected currentInstanceId$$ = new BehaviorSubject<string>(null);
   currentInstanceId$ = this.currentInstanceId$$
     .asObservable()
     .pipe(distinctUntilChanged());

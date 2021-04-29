@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AbstractModuleStateService } from '../../../../libs/module-state/src/lib/services/abstract-module-state.service';
 
-export interface AppModuleState {
+export interface SearchModuleState {
   formValues: Record<string, any>;
   formFields: any[];
 }
@@ -9,10 +9,11 @@ export interface AppModuleState {
 @Injectable({
   providedIn: 'root',
 })
-export class AppModuleStateService extends AbstractModuleStateService<AppModuleState> {
-  moduleName = 'Suche';
+export class SearchModuleStateService extends AbstractModuleStateService<SearchModuleState> {
+  moduleName = 'Search';
+  routeIdentifier = 'search';
 
-  getBlankModuleState(): AppModuleState {
+  getBlankModuleState(): SearchModuleState {
     return {
       formFields: [],
       formValues: {},
