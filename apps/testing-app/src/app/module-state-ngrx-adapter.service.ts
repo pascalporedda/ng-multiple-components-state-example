@@ -26,6 +26,8 @@ export class ModuleStateNgrxAdapterService {
       }
     );
 
+    // TODO: WIP
+
     // // console.log(searchInstance, this.searchModuleService);
     // this.searchModuleService.states$$.subscribe((searchModuleState) => {
     //   console.log(searchModuleState);
