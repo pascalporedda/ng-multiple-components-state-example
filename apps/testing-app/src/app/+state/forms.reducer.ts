@@ -1,48 +1,30 @@
 import { Action, createReducer, on } from '@ngrx/store';
 import * as FormsActions from './forms.actions';
 import { cloneDeep } from 'lodash';
+import { ModuleStateRecord } from '../../../../../libs/module-state/src/lib/services/module-state-collector.service';
+import { SearchModuleState } from '../search-module-state.service';
 
-export const FORMS_FEATURE_KEY = 'forms';
+export const MODULE_FEATURE_KEY = 'exampleModule';
 
-export interface FormState {
-  name?: string;
-  formValue?: string;
+export interface ModuleState {
+  states: ModuleStateRecord<SearchModuleState>;
 }
 
-export interface FormsState {
-  forms: Record<string, FormState>
-}
-
-export const initialState: FormsState = {
-  forms: {}
+export const initialState: ModuleState = {
+  states: {},
 };
 
 const formsReducer = createReducer(
   initialState,
-  on(FormsActions.formsValueUpdated, (state, { formsId, formValue }) => {
+  on(FormsActions.moduleStateUpdated, (state, { states }) => {
     const newState = cloneDeep(state);
 
-    newState.forms[formsId]['formValue'] = formValue;
-
-    return newState;
-  }),
-  on(FormsActions.formInit, (state, { formId }) => {
-    const newState = cloneDeep(state);
-    newState.forms[formId] = {
-      name: 'Form ' + formId,
-      formValue: null
-    };
-
-    return newState;
-  }),
-  on(FormsActions.formClose, (state, { formId }) => {
-    const newState = cloneDeep(state);
-    delete newState.forms[formId];
+    newState.states = states;
 
     return newState;
   })
 );
 
-export function reducer(state: FormsState | undefined, action: Action) {
+export function reducer(state: ModuleState | undefined, action: Action) {
   return formsReducer(state, action);
 }

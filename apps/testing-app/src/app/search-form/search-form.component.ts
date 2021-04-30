@@ -5,6 +5,7 @@ import {
 } from '../search-module-state.service';
 import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'ng-multiple-components-state-search-form',
@@ -41,7 +42,8 @@ export class SearchFormComponent implements OnInit, OnDestroy {
   }
 
   addFormField(): void {
-    const newState = { ...this.state };
+    console.log(this.state);
+    const newState = cloneDeep(this.state);
     newState.formFields.push(newState.formFields.length);
     this.appStateService.updateCurrentInstance(newState);
   }

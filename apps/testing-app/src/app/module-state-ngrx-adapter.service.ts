@@ -6,6 +6,7 @@ import {
   SearchModuleState,
   SearchModuleStateService,
 } from './search-module-state.service';
+import { moduleStateUpdated } from './+state/forms.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -18,15 +19,15 @@ export class ModuleStateNgrxAdapterService {
   ) {}
 
   syncStates(): void {
-    console.log(this.moduleStateCollector.stateServices);
-    console.log(this.searchModuleService);
-    const searchInstance = this.moduleStateCollector.stateServices.find(
-      (instance) => {
-        return instance instanceof SearchModuleStateService;
-      }
-    );
+    this.searchModuleService.states$$.subscribe((states) => {
+      this.store.dispatch(
+        moduleStateUpdated({
+          states,
+        })
+      );
+    });
 
-    // TODO: WIP
+    // TODO: Resync from store
 
     // // console.log(searchInstance, this.searchModuleService);
     // this.searchModuleService.states$$.subscribe((searchModuleState) => {

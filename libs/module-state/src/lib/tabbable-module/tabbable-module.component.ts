@@ -78,9 +78,11 @@ export abstract class TabbableModuleComponent<T> implements OnInit, OnDestroy {
         nextId = ids[position + 1];
       }
 
-      this.router.navigate(['../', nextId]).then(() => {
-        this.stateService.removeState(id);
-      });
+      this.router
+        .navigate([this.stateService.routeIdentifier, nextId])
+        .then(() => {
+          this.stateService.removeState(id);
+        });
     } else {
       this.stateService.removeState(id);
     }
