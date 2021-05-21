@@ -22,6 +22,8 @@ export abstract class AbstractModuleStateService<T>
     ModuleStateRecord<T>
   >({});
 
+  activeModuleId$$ = new BehaviorSubject<string>(null);
+
   moduleName: string;
   abstract routeIdentifier: string;
   currentInstanceIds$ = this.states$$.pipe(
@@ -62,6 +64,7 @@ export abstract class AbstractModuleStateService<T>
       if (!id) return null;
       const stateIds = Object.keys(states);
       this.currentInstanceId = id;
+      this.activeModuleId$$.next(id);
       if (!states[id]) {
         const blankState = this.getBlankModuleState();
         this.addState(id, blankState);

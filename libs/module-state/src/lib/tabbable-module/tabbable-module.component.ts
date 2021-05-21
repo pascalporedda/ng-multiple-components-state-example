@@ -23,14 +23,23 @@ export abstract class TabbableModuleComponent<T> implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.stateSubscriptions = this.moduleStateInstanceService.currentInstanceId$
-      .pipe(withLatestFrom(this.stateService.instances$))
-      .subscribe(([id, instances]) => {
+      .pipe(
+        withLatestFrom(
+          this.stateService.instances$,
+          this.stateService.activeModuleId$$,
+          this.stateService.currentInstanceIds$
+        )
+      )
+      .subscribe(([id, instances, activeModuleId, currentInstanceIds]) => {
+        let nextId = id;
+
+        if (!currentInstanceIds.find((cur) => cur === id)) {
+          nextId = activeModuleId;
+        }
+
         if (!id && instances.length > 0) {
           // TODO: Maybe goto the previous opened tab instead of the first one?
-          this.router.navigate([
-            this.stateService.routeIdentifier,
-            instances[0].id,
-          ]);
+          this.router.navigate([this.stateService.routeIdentifier, nextId]);
         }
         if (!id && !instances.length) {
           this.addNewModule();
